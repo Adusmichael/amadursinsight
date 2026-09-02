@@ -1,0 +1,111 @@
+@import "tailwindcss";
+
+/*
+  Design language: "drafting paper" — an off-white ground with a faint grid,
+  one steel-blue accent, Archivo for headings, IBM Plex Sans for body, IBM Plex
+  Mono for identifiers. Deliberately the same identity as the product spec, so
+  the tool looks like its own document.
+*/
+
+:root {
+  --paper: #fbfaf8;
+  --surface: #ffffff;
+  --code-bg: #f4f2ec;
+  --ink: #1c2026;
+  --ink-soft: #565d6b;
+  --ink-faint: #878d99;
+  --rule: #e6e3dc;
+  --rule-strong: #d3cfc5;
+  --accent: #2f5d7c;
+  --accent-ink: #244b64;
+  --accent-wash: #ecf2f6;
+  --flag: #a2551f;
+  --flag-wash: #f6ede4;
+  --good: #386e51;
+  --good-wash: #e9f0eb;
+  --grid: rgba(28, 32, 38, 0.035);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #13161b;
+    --surface: #1a1e24;
+    --code-bg: #0f1217;
+    --ink: #e7e6e2;
+    --ink-soft: #a3a9b3;
+    --ink-faint: #767c87;
+    --rule: #2a2f37;
+    --rule-strong: #3a414b;
+    --accent: #7cb0cc;
+    --accent-ink: #9ec8dd;
+    --accent-wash: #1b2a33;
+    --flag: #d28c5d;
+    --flag-wash: #2b2018;
+    --good: #71ab8c;
+    --good-wash: #19241e;
+    --grid: rgba(231, 230, 226, 0.04);
+  }
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-code-bg: var(--code-bg);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-rule: var(--rule);
+  --color-rule-strong: var(--rule-strong);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-wash: var(--accent-wash);
+  --color-flag: var(--flag);
+  --color-flag-wash: var(--flag-wash);
+  --color-good: var(--good);
+  --color-good-wash: var(--good-wash);
+
+  --font-display: var(--font-archivo), "Helvetica Neue", Arial, sans-serif;
+  --font-sans: var(--font-plex-sans), "Segoe UI", system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "SF Mono", monospace;
+}
+
+@layer base {
+  * {
+    border-color: var(--rule);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--paper);
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 26px 26px;
+    background-position: -1px -1px;
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--surface);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
