@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { editRequirementText, markReviewed, reviewCount } from "@/lib/graph";
-import { SAMPLE_DOC } from "@/lib/sample";
 import type { RequirementsDoc } from "@/lib/types";
 import { DocView, type DocHandlers } from "@/components/workspace/doc-view";
 import { ExportBar } from "@/components/workspace/export-bar";
@@ -18,24 +17,27 @@ export default function Workspace() {
   async function generate(payload: GeneratePayload) {
     setBusy(true);
     setError(null);
-
-    // BUILD STEP 4 replaces this block with a call to POST /api/generate.
-    // Until then, every generate returns the pre-verified sample document so
-    // the rendering, editing, and impact logic can be built and demoed first.
-    await new Promise((resolve) => setTimeout(resolve, 350));
-
-    const next = structuredClone(SAMPLE_DOC);
-    next.meta = {
-      projectName: payload.projectName.trim() || next.meta.projectName,
-      stakeholders: payload.stakeholders.trim()
-        ? payload.stakeholders.split(",").map((s) => s.trim()).filter(Boolean)
-        : next.meta.stakeholders,
-      meetingDate: payload.meetingDate || next.meta.meetingDate,
-      generatedAt: new Date().toISOString(),
-    };
-
-    setDoc(next);
-    setBusy(false);
+    try {
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data: unknown = await res.json();
+      if (!res.ok) {
+        const message =
+          data && typeof data === "object" && typeof (data as { error?: unknown }).error === "string"
+            ? (data as { error: string }).error
+            : "Generation failed. Try again.";
+        setError(message);
+        return;
+      }
+      setDoc(data as RequirementsDoc);
+    } catch {
+      setError("Could not reach the server. Check your connection and try again.");
+    } finally {
+      setBusy(false);
+    }
   }
 
   const handlers: DocHandlers = {
