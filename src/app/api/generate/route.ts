@@ -13,8 +13,8 @@ const MODEL = process.env.ANTHROPIC_MODEL || "claude-opus-5";
 const SYSTEM = `You are a senior business analyst. Turn the raw meeting notes into a FIRST-DRAFT requirements document by calling the ${EXTRACTION_TOOL_NAME} tool exactly once.
 
 Rules:
-- Requirements: one clear, testable statement each. Classify every requirement as functional, non-functional, business-rule, or constraint. Plain language. Do not invent detail the notes do not support.
-- User stories: write one for EACH functional requirement, and none for the other kinds. Give asA / iWant / soThat as three separate parts, each WITHOUT its leading words (asA: "a referral coordinator", not "As a referral coordinator"). Keep them INVEST-shaped. Set priority only when the notes make it clear; otherwise "unset".
+- Requirements: one clear, testable statement each. Classify every requirement as functional, non-functional, business-rule, or constraint. Capture each distinct need ONCE - do not restate a functional requirement as a separate business rule. Plain language. Do not invent detail the notes do not support.
+- User stories: write one for EACH functional requirement, and none for the other kinds. Give asA / iWant / soThat as three separate parts, each phrased to slot into "As {asA}, I want {iWant}, so that {soThat}" - so asA starts with an article ("a referral coordinator", "an admin"), and none of the three parts repeats its leading words. Keep them INVEST-shaped. Set priority only when the notes make it clear; otherwise "unset".
 - Acceptance criteria: at least two per story, in Given / When / Then form, each one verifying its story.
 - Risks, assumptions, open questions: capture what the notes leave uncertain. Prefer raising a gap as an open question over guessing.
 - Give every item a short id (R1, US1, AC1.1, RSK1, ASM1, OQ1). Each story's derivedFrom must be a functional requirement id; each criterion's storyId must be a user story id.
@@ -48,7 +48,10 @@ export async function POST(req: Request) {
     );
   }
 
-  const client = new Anthropic();
+  const workspaceId = process.env.ANTHROPIC_WORKSPACE_ID;
+  const client = new Anthropic(
+    workspaceId ? { defaultHeaders: { "anthropic-workspace-id": workspaceId } } : {},
+  );
 
   try {
     const response = await client.messages.create({
@@ -115,8 +118,10 @@ export async function POST(req: Request) {
     }
     if (error instanceof Anthropic.APIError) {
       console.error("[generate] API error", error.status, error.message);
+      // Surface 400 validation detail — it's an Anthropic config message, not a secret.
+      const detail = error.status === 400 ? ` — ${error.message}` : "";
       return NextResponse.json(
-        { error: "The model API returned an error. Try again." },
+        { error: `The model API rejected the request${detail}` },
         { status: 502 },
       );
     }

@@ -127,8 +127,9 @@ export function InputPanel({
             {busy ? "Generating…" : "Generate requirements"}
           </Btn>
           <span className="max-w-sm font-mono text-[0.64rem] leading-relaxed text-ink-faint">
-            Notes are sent to an AI model for extraction and are not stored. Don&rsquo;t paste
-            anything confidential.
+            {busy
+              ? "Extracting requirements — this usually takes 10–30 seconds."
+              : "Notes are sent to an AI model for extraction and are not stored. Don’t paste anything confidential."}
           </span>
         </div>
       </div>
