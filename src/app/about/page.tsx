@@ -54,14 +54,19 @@ export default function AboutPage() {
 
       <H>What it deliberately leaves out</H>
       <ul className="mt-1 space-y-1.5 pl-4 text-[0.92rem] leading-relaxed text-ink-soft">
-        <li>Accounts, login, and any stored data &mdash; one session, nothing persisted.</li>
+        <li>Accounts, login, and any server-side storage.</li>
         <li>Multi-user collaboration, comments, approvals.</li>
         <li>PDF and Word export &mdash; Markdown only, copied or downloaded.</li>
         <li>Diagram generation, a multi-project dashboard, version history.</li>
       </ul>
       <p className="mt-3 text-[0.92rem] leading-relaxed text-ink-soft">
-        Each of those is a project in its own right. Naming the boundary is part of the point:
-        the skill on show is scoping a real problem down to something shippable.
+        The one concession: your current draft is kept in <em>this browser</em> (never on a
+        server) so a refresh doesn&rsquo;t lose it. &ldquo;Start over&rdquo; clears it. That is
+        a convenience, not the version history above.
+      </p>
+      <p className="mt-3 text-[0.92rem] leading-relaxed text-ink-soft">
+        Each of the excluded items is a project in its own right. Naming the boundary is part of
+        the point: the skill on show is scoping a real problem down to something shippable.
       </p>
 
       <H>What would come next</H>

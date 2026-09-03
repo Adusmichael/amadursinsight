@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { SAMPLE_NOTES } from "@/lib/sample-notes";
 import { Btn, FieldLabel } from "./primitives";
+import { GenerationProgress } from "./generation-progress";
 
 const MIN_CHARS = 40;
 const MAX_CHARS = 15000;
@@ -51,7 +52,7 @@ export function InputPanel({
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="font-display text-[1.7rem] font-bold leading-tight tracking-tight text-ink">
+        <h1 className="font-display text-[1.4rem] font-bold leading-tight tracking-tight text-ink sm:text-[1.7rem]">
           Meeting notes to requirements
         </h1>
         <p className="mt-1.5 max-w-xl text-[0.95rem] leading-relaxed text-ink-soft">
@@ -126,12 +127,15 @@ export function InputPanel({
           >
             {busy ? "Generating…" : "Generate requirements"}
           </Btn>
-          <span className="max-w-sm font-mono text-[0.64rem] leading-relaxed text-ink-faint">
-            {busy
-              ? "Extracting requirements — this usually takes 10–30 seconds."
-              : "Notes are sent to an AI model for extraction and are not stored. Don’t paste anything confidential."}
-          </span>
+          {!busy && (
+            <span className="max-w-sm font-mono text-[0.64rem] leading-relaxed text-ink-faint">
+              Notes are sent to an AI model for extraction and are not stored. Don&rsquo;t paste
+              anything confidential.
+            </span>
+          )}
         </div>
+
+        {busy && <GenerationProgress />}
       </div>
     </div>
   );

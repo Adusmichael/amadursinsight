@@ -41,13 +41,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <span className="font-display text-[0.95rem] font-bold tracking-tight text-ink">
                 Amadurs<span className="text-accent-ink">Insight</span>
               </span>
-              <span className="font-mono text-[0.62rem] uppercase tracking-[0.16em] text-ink-faint">
+              <span className="hidden font-mono text-[0.62rem] uppercase tracking-[0.16em] text-ink-faint min-[420px]:inline">
                 notes &rarr; requirements
               </span>
             </Link>
             <Link
               href="/about"
-              className="font-mono text-[0.72rem] uppercase tracking-[0.1em] text-ink-soft underline-offset-4 hover:text-accent-ink hover:underline"
+              className="shrink-0 font-mono text-[0.72rem] uppercase tracking-[0.1em] text-ink-soft underline-offset-4 hover:text-accent-ink hover:underline"
             >
               Design decisions
             </Link>

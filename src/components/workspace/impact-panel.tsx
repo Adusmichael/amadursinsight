@@ -20,7 +20,7 @@ export function ImpactPanel({
   ];
 
   return (
-    <aside className="fixed bottom-4 right-4 z-40 w-[19rem] max-w-[calc(100vw-2rem)] overflow-hidden rounded-lg border border-flag/40 bg-surface shadow-lg">
+    <aside className="fixed inset-x-3 bottom-3 z-40 overflow-hidden rounded-lg border border-flag/40 bg-surface shadow-lg sm:inset-x-auto sm:right-4 sm:bottom-4 sm:w-[19rem]">
       <div className="border-b border-rule px-3 py-2">
         <span className="font-mono text-[0.7rem] uppercase tracking-[0.08em] text-flag">
           {total} item{total === 1 ? "" : "s"} need review
