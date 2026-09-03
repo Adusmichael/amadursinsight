@@ -1,0 +1,13 @@
+# Rename to ".htaccess" and place at the web root (public_html/) alongside index.html.
+# Forces HTTPS, disables directory listing, and blocks direct access to the
+# secrets file if you had to keep it inside the web root.
+
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+Options -Indexes
+
+<Files "amadursinsight-secrets.php">
+  Require all denied
+</Files>

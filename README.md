@@ -9,47 +9,85 @@ criterion that now needs review.
 A single-feature portfolio project. See **Design decisions** (`/about`) for what
 it deliberately leaves out and why.
 
-## Run it
+## Architecture
+
+A static frontend (Next.js static export) plus a small **PHP proxy** that holds
+the Anthropic API key server-side. The key is never in the browser. The proxy
+just forwards the notes to the model with a forced strict-schema tool call and
+returns the raw result; the browser repairs the ID/trace graph (`normalize`),
+which involves no secret.
+
+```
+public_html/
+  index.html, about/, _next/…      ← static export (npm run build:static → ./out)
+  api/generate.php                 ← proxy (reads the key, calls Anthropic)
+  api/extraction-schema.json       ← shared tool schema
+  api/system-prompt.txt            ← the BA framing
+  .htaccess                        ← force HTTPS, no dir listing
+~/amadursinsight-secrets.php       ← ONE LEVEL ABOVE public_html: your key
+```
+
+## Develop
 
 ```bash
 npm install
-cp .env.example .env.local     # then paste your Anthropic API key
-npm run dev                     # http://localhost:3000
+npm run dev            # http://localhost:3000 — UI, editing, impact, export
+
+# to test generation locally (no PHP needed):
+node --env-file=.env.local scripts/dev-proxy.mjs        # terminal 1
+NEXT_PUBLIC_GENERATE_ENDPOINT=http://localhost:8787/generate npm run dev   # terminal 2
 ```
 
-`ANTHROPIC_API_KEY` is required for generation. Without it the app loads and the
-"Load sample notes" button still works, but **Generate** returns a clear error.
-Set `ANTHROPIC_MODEL=claude-sonnet-5` in `.env.local` for a faster, cheaper run.
+`.env.local` (git-ignored):
+
+```
+ANTHROPIC_API_KEY=sk-ant-...
+ANTHROPIC_WORKSPACE_ID=wrkspc_...   # only if your key is identity-linked
+ANTHROPIC_MODEL=claude-sonnet-5      # or claude-opus-5 (slower, ~2.5× cost)
+```
 
 ```bash
 npm test        # graph + normalize logic (Vitest)
 npm run lint
-npm run build
 ```
+
+## Deploy to shared hosting (Namecheap / cPanel)
+
+1. **Build:** `npm run build:static` → produces `./out/` with the PHP files
+   already in place.
+2. **Upload** everything inside `./out/` into `public_html/` at the **domain
+   root** (asset paths are absolute, so a subfolder needs `basePath` config).
+   Use cPanel File Manager or FTP.
+3. **Secrets:** rename `out/amadursinsight-secrets.example.php` →
+   `amadursinsight-secrets.php`, fill in your key, and put it **one level above
+   `public_html`** (your cPanel home directory). If your host won't allow that,
+   leave it in `public_html/api/` — `generate.php` checks there last — and the
+   bundled `.htaccess` blocks direct web access to it.
+4. Open your domain. The form posts to `/api/generate.php`.
+
+Requires PHP with either the cURL extension or `allow_url_fopen` (both standard
+on Namecheap). No Node runtime on the host.
+
+You pay Anthropic per generation (cents per click, only when someone hits
+Generate). Set a spend cap in the Anthropic console.
 
 ## How it works
 
-- **Extraction** — `POST /api/generate` sends the notes to Claude with a forced,
-  strict-schema tool call. The system prompt supplies the BA framing (artifact
-  types, INVEST stories, Given/When/Then, "surface gaps, don't invent").
-- **Normalisation** — `src/lib/normalize.ts` does not trust the model output: it
-  regenerates all IDs in order, drops any story that doesn't trace to a
-  functional requirement and any criterion that doesn't trace to a story, and
-  strips blank items. The trace graph is always fully connected.
-- **Change impact** — `src/lib/graph.ts` is pure and deterministic (no model
-  call). Editing a requirement walks `derivedFrom` / `storyId` back-references
-  and marks descendants `review-needed`.
+- **Extraction** — `deploy/generate.php` sends the notes to Claude with a
+  forced, strict-schema `record_requirements` tool call.
+- **Normalisation** — `src/lib/normalize.ts` (runs in the browser) does not
+  trust the model output: it regenerates all IDs in order, drops any story that
+  doesn't trace to a functional requirement and any criterion that doesn't
+  trace to a story, and strips blanks. The trace graph is always connected.
+- **Change impact** — `src/lib/graph.ts` is pure and deterministic. Editing a
+  requirement walks `derivedFrom` / `storyId` back-references and marks
+  descendants `review-needed`.
 
 ## Stack
 
-Next.js (App Router) · TypeScript · Tailwind CSS v4 · `@anthropic-ai/sdk`. No
-database, no accounts — the document lives in the browser tab for one session.
-Notes are sent to Anthropic for extraction and are not stored.
-
-## Deploy
-
-Push to a Git host and import into Vercel. Set `ANTHROPIC_API_KEY` (and
-optionally `ANTHROPIC_MODEL`) as a project environment variable.
+Next.js (App Router, static export) · TypeScript · Tailwind CSS v4 · a PHP
+proxy. No database, no accounts — the document lives in the browser tab for one
+session. Notes are sent to Anthropic for extraction and are not stored.
 
 ---
 

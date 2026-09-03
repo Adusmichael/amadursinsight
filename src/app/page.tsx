@@ -2,7 +2,13 @@
 
 import { useState } from "react";
 import { editRequirementText, markReviewed, reviewCount } from "@/lib/graph";
+import { normalizeModelDoc } from "@/lib/normalize";
 import type { RequirementsDoc } from "@/lib/types";
+
+// The PHP proxy that holds the API key. Override at build time with
+// NEXT_PUBLIC_GENERATE_ENDPOINT if the app is served from a subfolder.
+const GENERATE_ENDPOINT =
+  process.env.NEXT_PUBLIC_GENERATE_ENDPOINT || "/api/generate.php";
 import { DocView, type DocHandlers } from "@/components/workspace/doc-view";
 import { ExportBar } from "@/components/workspace/export-bar";
 import { ImpactPanel } from "@/components/workspace/impact-panel";
@@ -18,13 +24,13 @@ export default function Workspace() {
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch("/api/generate", {
+      const res = await fetch(GENERATE_ENDPOINT, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ notes: payload.notes }),
       });
-      const data: unknown = await res.json();
-      if (!res.ok) {
+      const data: unknown = await res.json().catch(() => null);
+      if (!res.ok || !data || typeof data !== "object") {
         const message =
           data && typeof data === "object" && typeof (data as { error?: unknown }).error === "string"
             ? (data as { error: string }).error
@@ -32,7 +38,19 @@ export default function Workspace() {
         setError(message);
         return;
       }
-      setDoc(data as RequirementsDoc);
+      // The proxy returns the raw model output; the trace graph is repaired here.
+      const doc = normalizeModelDoc((data as { model?: unknown }).model, {
+        projectName: payload.projectName,
+        stakeholders: payload.stakeholders,
+        meetingDate: payload.meetingDate,
+      });
+      if (doc.requirements.length === 0) {
+        setError(
+          "No requirements could be extracted. Add more about what the system should actually do.",
+        );
+        return;
+      }
+      setDoc(doc);
     } catch {
       setError("Could not reach the server. Check your connection and try again.");
     } finally {
