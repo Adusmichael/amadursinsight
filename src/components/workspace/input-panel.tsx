@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { SAMPLE_NOTES } from "@/lib/sample-notes";
+import { SAMPLE_SCENARIOS } from "@/lib/sample-notes";
 import { Btn, FieldLabel } from "./primitives";
 import { GenerationProgress } from "./generation-progress";
 
@@ -68,15 +68,24 @@ export function InputPanel({
       </div>
 
       <div className="rounded-lg border border-rule bg-surface p-4">
-        <div className="mb-2 flex items-center justify-between">
+        <div className="mb-2 flex items-center justify-between gap-3">
           <FieldLabel>Meeting notes</FieldLabel>
-          <button
-            type="button"
-            onClick={() => setNotes(SAMPLE_NOTES)}
-            className="font-mono text-[0.7rem] text-accent-ink underline-offset-2 hover:underline"
+          <select
+            value=""
+            onChange={(event) => {
+              const scenario = SAMPLE_SCENARIOS.find((s) => s.id === event.target.value);
+              if (scenario) setNotes(scenario.notes);
+            }}
+            aria-label="Load a sample scenario"
+            className="cursor-pointer rounded border-none bg-transparent font-mono text-[0.7rem] text-accent-ink underline-offset-2 hover:underline focus:outline-none focus-visible:underline"
           >
-            Load sample notes
-          </button>
+            <option value="">Load a sample&hellip;</option>
+            {SAMPLE_SCENARIOS.map((scenario) => (
+              <option key={scenario.id} value={scenario.id}>
+                {scenario.label}
+              </option>
+            ))}
+          </select>
         </div>
 
         <textarea
