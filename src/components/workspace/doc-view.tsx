@@ -1,6 +1,6 @@
 "use client";
 
-import type { LabeledItem, RequirementsDoc } from "@/lib/types";
+import type { LabeledItem, RequirementsDoc, TestStatus } from "@/lib/types";
 import { RequirementItem } from "./requirement-item";
 import { StoryItem, type StoryPatch } from "./story-item";
 import { CriterionItem, type CriterionPatch } from "./criterion-item";
@@ -15,6 +15,7 @@ export interface DocHandlers {
   editCriterion: (id: string, patch: CriterionPatch) => void;
   editConflict: (id: string, patch: ConflictPatch) => void;
   markReviewed: (kind: "story" | "criterion", id: string) => void;
+  setCriterionTestStatus: (id: string, status: TestStatus) => void;
   editLabeled: (section: LabeledSection, id: string, text: string) => void;
 }
 
@@ -143,6 +144,7 @@ export function DocView({ doc, handlers }: { doc: RequirementsDoc; handlers: Doc
               criterion={criterion}
               onEdit={handlers.editCriterion}
               onReviewed={(id) => handlers.markReviewed("criterion", id)}
+              onSetTestStatus={handlers.setCriterionTestStatus}
             />
           ))}
         </ul>

@@ -44,6 +44,15 @@ export function EditedPill() {
   );
 }
 
+/** A criterion that was verified, then got flagged review-needed by an upstream edit. */
+export function StalePassPill() {
+  return (
+    <span className="inline-flex items-center rounded-sm border border-flag/40 bg-flag-wash px-1.5 py-0.5 font-mono text-[0.6rem] uppercase tracking-[0.09em] text-flag">
+      was passing &middot; retest
+    </span>
+  );
+}
+
 type BtnProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: "solid" | "outline" | "ghost";
 };

@@ -23,6 +23,8 @@
   --flag-wash: #f6ede4;
   --good: #386e51;
   --good-wash: #e9f0eb;
+  --bad: #a23b34;
+  --bad-wash: #f7e9e7;
   --grid: rgba(28, 32, 38, 0.035);
 }
 
@@ -43,6 +45,8 @@
     --flag-wash: #2b2018;
     --good: #71ab8c;
     --good-wash: #19241e;
+    --bad: #d98a83;
+    --bad-wash: #2b1a18;
     --grid: rgba(231, 230, 226, 0.04);
   }
 }
@@ -63,6 +67,8 @@
   --color-flag-wash: var(--flag-wash);
   --color-good: var(--good);
   --color-good-wash: var(--good-wash);
+  --color-bad: var(--bad);
+  --color-bad-wash: var(--bad-wash);
 
   --font-display: var(--font-archivo), "Helvetica Neue", Arial, sans-serif;
   --font-sans: var(--font-plex-sans), "Segoe UI", system-ui, sans-serif;

@@ -1,6 +1,7 @@
 import {
   REQUIREMENT_KIND_LABEL,
   PRIORITY_LABEL,
+  TEST_STATUS_LABEL,
   criterionStatement,
   storyStatement,
   type RequirementsDoc,
@@ -63,7 +64,8 @@ export function docToMarkdown(doc: RequirementsDoc): string {
   lines.push("");
   for (const a of doc.acceptanceCriteria) {
     const flag = a.status === "review-needed" ? " _(review needed)_" : "";
-    lines.push(`- **${a.id}** (${a.storyId}) ${criterionStatement(a)}${flag}`);
+    const test = ` [${TEST_STATUS_LABEL[a.testStatus]}]`;
+    lines.push(`- **${a.id}** (${a.storyId})${test} ${criterionStatement(a)}${flag}`);
   }
   lines.push("");
 

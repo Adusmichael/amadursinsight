@@ -41,6 +41,20 @@ export type RequirementStatus = "ok" | "edited";
 /** Downstream items are flagged "review-needed" when their parent changes. */
 export type DownstreamStatus = "ok" | "review-needed";
 
+/**
+ * Whether a criterion has actually been verified. Purely human-set - never
+ * part of the extraction schema, so the model can't invent a pass/fail.
+ */
+export type TestStatus = "untested" | "passed" | "failed";
+
+export const TEST_STATUSES: TestStatus[] = ["untested", "passed", "failed"];
+
+export const TEST_STATUS_LABEL: Record<TestStatus, string> = {
+  untested: "Not tested",
+  passed: "Passed",
+  failed: "Failed",
+};
+
 export interface DocMeta {
   projectName: string | null;
   stakeholders: string[];
@@ -73,6 +87,7 @@ export interface AcceptanceCriterion {
   when: string;
   then: string;
   status: DownstreamStatus;
+  testStatus: TestStatus;
 }
 
 export interface LabeledItem {

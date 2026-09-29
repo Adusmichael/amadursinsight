@@ -108,6 +108,8 @@ export function normalizeModelDoc(raw: unknown, meta: MetaInput): RequirementsDo
       when,
       then,
       status: "ok",
+      // Always fresh, regardless of raw input - the model never sets this.
+      testStatus: "untested",
     });
   }
 

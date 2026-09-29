@@ -103,6 +103,7 @@ export const SAMPLE_DOC: RequirementsDoc = {
       when: "the coordinator submits the form",
       then: "the referral is created and given a unique reference number",
       status: "ok",
+      testStatus: "passed",
     },
     {
       id: "AC1.2",
@@ -111,6 +112,7 @@ export const SAMPLE_DOC: RequirementsDoc = {
       when: "the coordinator saves it as a draft",
       then: "it is retained for at least 30 days and can be reopened by the same coordinator",
       status: "ok",
+      testStatus: "passed",
     },
     {
       id: "AC2.1",
@@ -119,6 +121,7 @@ export const SAMPLE_DOC: RequirementsDoc = {
       when: "the coordinator attempts to submit",
       then: "submission is blocked and each missing field is named",
       status: "ok",
+      testStatus: "untested",
     },
     {
       id: "AC3.1",
@@ -127,6 +130,7 @@ export const SAMPLE_DOC: RequirementsDoc = {
       when: "the coordinator moves focus off the field",
       then: "name, date of birth, and address are pre-filled from the Spine lookup",
       status: "ok",
+      testStatus: "failed",
     },
   ],
   risks: [

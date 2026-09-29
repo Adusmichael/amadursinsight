@@ -112,6 +112,17 @@ export default function Workspace() {
         d ? { ...d, conflicts: d.conflicts.map((c) => (c.id === id ? { ...c, ...patch } : c)) } : d,
       ),
     markReviewed: (kind, id) => setDoc((d) => (d ? markReviewed(d, kind, id) : d)),
+    setCriterionTestStatus: (id, testStatus) =>
+      setDoc((d) =>
+        d
+          ? {
+              ...d,
+              acceptanceCriteria: d.acceptanceCriteria.map((a) =>
+                a.id === id ? { ...a, testStatus } : a,
+              ),
+            }
+          : d,
+      ),
     editLabeled: (section, id, text) =>
       setDoc((d) =>
         d

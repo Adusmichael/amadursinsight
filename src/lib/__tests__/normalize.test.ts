@@ -33,6 +33,7 @@ describe("normalizeModelDoc", () => {
     expect(doc.userStories.map((s) => s.derivedFrom)).toEqual(["R1", "R3"]);
     expect(doc.acceptanceCriteria.map((c) => c.id)).toEqual(["AC1.1", "AC1.2", "AC2.1"]);
     expect(doc.acceptanceCriteria.map((c) => c.storyId)).toEqual(["US1", "US1", "US2"]);
+    expect(doc.acceptanceCriteria.every((c) => c.testStatus === "untested")).toBe(true);
     expect(doc.risks[0].id).toBe("RSK1");
     expect(doc.assumptions[0].id).toBe("ASM1");
     expect(doc.openQuestions[0].id).toBe("OQ1");
