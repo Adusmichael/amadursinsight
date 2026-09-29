@@ -43,13 +43,17 @@ createServer(async (req, res) => {
   let body = "";
   for await (const chunk of req) body += chunk;
   let notes = "";
+  let backlog = "";
   try {
-    notes = String(JSON.parse(body).notes ?? "").trim();
+    const parsed = JSON.parse(body);
+    notes = String(parsed.notes ?? "").trim();
+    backlog = String(parsed.backlog ?? "").trim();
   } catch {
     return send(res, 400, { error: "Invalid request body." });
   }
   if (notes.length < 40) return send(res, 400, { error: "Add more detail to the notes before generating." });
   if (notes.length > 15000) return send(res, 400, { error: "Notes exceed the 15,000-character limit." });
+  if (backlog.length > 15000) return send(res, 400, { error: "The backlog/tickets text exceeds the 15,000-character limit." });
 
   const headers = {
     "content-type": "application/json",
@@ -57,6 +61,11 @@ createServer(async (req, res) => {
     "anthropic-version": "2023-06-01",
   };
   if (workspaceId) headers["anthropic-workspace-id"] = workspaceId;
+
+  let userContent = `Meeting notes:\n\n${notes}`;
+  if (backlog) {
+    userContent += `\n\nExisting backlog / tickets (may conflict with the notes above or with each other):\n\n${backlog}`;
+  }
 
   try {
     const r = await fetch("https://api.anthropic.com/v1/messages", {
@@ -77,7 +86,7 @@ createServer(async (req, res) => {
           },
         ],
         tool_choice: { type: "tool", name: "record_requirements" },
-        messages: [{ role: "user", content: `Meeting notes:\n\n${notes}` }],
+        messages: [{ role: "user", content: userContent }],
       }),
     });
     const data = await r.json();

@@ -80,9 +80,19 @@ export interface LabeledItem {
   text: string;
 }
 
+/** A contradiction the model found - between notes, backlog tickets, or both. */
+export interface Conflict {
+  id: string;
+  description: string;
+  involves: string[];
+  recommendation: string;
+}
+
 export interface RequirementsDoc {
   meta: DocMeta;
+  businessGoals: LabeledItem[];
   requirements: Requirement[];
+  conflicts: Conflict[];
   userStories: UserStory[];
   acceptanceCriteria: AcceptanceCriterion[];
   risks: LabeledItem[];

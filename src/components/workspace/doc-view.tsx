@@ -5,13 +5,15 @@ import { RequirementItem } from "./requirement-item";
 import { StoryItem, type StoryPatch } from "./story-item";
 import { CriterionItem, type CriterionPatch } from "./criterion-item";
 import { LabeledItemRow } from "./labeled-item";
+import { ConflictItem, type ConflictPatch } from "./conflict-item";
 
-export type LabeledSection = "risks" | "assumptions" | "openQuestions";
+export type LabeledSection = "businessGoals" | "risks" | "assumptions" | "openQuestions";
 
 export interface DocHandlers {
   editRequirement: (id: string, text: string) => void;
   editStory: (id: string, patch: StoryPatch) => void;
   editCriterion: (id: string, patch: CriterionPatch) => void;
+  editConflict: (id: string, patch: ConflictPatch) => void;
   markReviewed: (kind: "story" | "criterion", id: string) => void;
   editLabeled: (section: LabeledSection, id: string, text: string) => void;
 }
@@ -73,6 +75,15 @@ function LabeledList({
 export function DocView({ doc, handlers }: { doc: RequirementsDoc; handlers: DocHandlers }) {
   return (
     <div className="space-y-8">
+      <Section index="00" title="Business goals" note={`${doc.businessGoals.length}`}>
+        <LabeledList
+          items={doc.businessGoals}
+          section="businessGoals"
+          emptyLabel="No business goal was stated in the notes — worth confirming before scoping further."
+          onEdit={handlers.editLabeled}
+        />
+      </Section>
+
       <Section
         index="01"
         title="Requirements"
@@ -91,6 +102,24 @@ export function DocView({ doc, handlers }: { doc: RequirementsDoc; handlers: Doc
 
       <Section
         index="02"
+        title="Conflicts"
+        note={`${doc.conflicts.length} · notes vs. notes, or notes vs. backlog`}
+      >
+        {doc.conflicts.length === 0 ? (
+          <p className="rounded-md border border-dashed border-rule-strong px-3 py-2.5 text-[0.82rem] text-ink-faint">
+            No contradictions found between the notes and any backlog provided.
+          </p>
+        ) : (
+          <ul className="space-y-2">
+            {doc.conflicts.map((conflict) => (
+              <ConflictItem key={conflict.id} conflict={conflict} onEdit={handlers.editConflict} />
+            ))}
+          </ul>
+        )}
+      </Section>
+
+      <Section
+        index="03"
         title="User stories"
         note={`${doc.userStories.length} · one per functional requirement`}
       >
@@ -106,7 +135,7 @@ export function DocView({ doc, handlers }: { doc: RequirementsDoc; handlers: Doc
         </ul>
       </Section>
 
-      <Section index="03" title="Acceptance criteria" note={`${doc.acceptanceCriteria.length} · Given / When / Then`}>
+      <Section index="04" title="Acceptance criteria" note={`${doc.acceptanceCriteria.length} · Given / When / Then`}>
         <ul className="space-y-2">
           {doc.acceptanceCriteria.map((criterion) => (
             <CriterionItem
@@ -119,7 +148,7 @@ export function DocView({ doc, handlers }: { doc: RequirementsDoc; handlers: Doc
         </ul>
       </Section>
 
-      <Section index="04" title="Risks">
+      <Section index="05" title="Risks">
         <LabeledList
           items={doc.risks}
           section="risks"
@@ -128,7 +157,7 @@ export function DocView({ doc, handlers }: { doc: RequirementsDoc; handlers: Doc
         />
       </Section>
 
-      <Section index="05" title="Assumptions">
+      <Section index="06" title="Assumptions">
         <LabeledList
           items={doc.assumptions}
           section="assumptions"
@@ -137,7 +166,7 @@ export function DocView({ doc, handlers }: { doc: RequirementsDoc; handlers: Doc
         />
       </Section>
 
-      <Section index="06" title="Open questions">
+      <Section index="07" title="Open questions">
         <LabeledList
           items={doc.openQuestions}
           section="openQuestions"

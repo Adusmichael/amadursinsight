@@ -14,6 +14,26 @@ export const SAMPLE_DOC: RequirementsDoc = {
     meetingDate: "2026-08-28",
     generatedAt: "2026-09-03T09:00:00.000Z",
   },
+  businessGoals: [
+    {
+      id: "BG1",
+      text: "Cut the time coordinators spend re-keying referral data by capturing it once, in one form.",
+    },
+    {
+      id: "BG2",
+      text: "Stop under-16 referrals from sitting in the general triage queue.",
+    },
+  ],
+  conflicts: [
+    {
+      id: "CFL1",
+      description:
+        "Marcus says the system must not build a new patient database, but the draft-save requirement (R5) implies referrals need to be stored somewhere between visits.",
+      involves: ["R5", "“we are NOT building another patient database” — Marcus"],
+      recommendation:
+        "Confirm with Marcus/IT whether an in-progress referral draft counts as “patient data” under that constraint, or only the Spine-sourced demographics do.",
+    },
+  ],
   requirements: [
     {
       id: "R1",

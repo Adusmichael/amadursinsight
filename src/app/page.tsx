@@ -51,7 +51,7 @@ export default function Workspace() {
       const res = await fetch(GENERATE_ENDPOINT, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ notes: payload.notes }),
+        body: JSON.stringify({ notes: payload.notes, backlog: payload.backlog }),
       });
       const data: unknown = await res.json().catch(() => null);
       if (!res.ok || !data || typeof data !== "object") {
@@ -106,6 +106,10 @@ export default function Workspace() {
               ),
             }
           : d,
+      ),
+    editConflict: (id, patch) =>
+      setDoc((d) =>
+        d ? { ...d, conflicts: d.conflicts.map((c) => (c.id === id ? { ...c, ...patch } : c)) } : d,
       ),
     markReviewed: (kind, id) => setDoc((d) => (d ? markReviewed(d, kind, id) : d)),
     editLabeled: (section, id, text) =>

@@ -1,8 +1,20 @@
 {
   "type": "object",
   "additionalProperties": false,
-  "required": ["requirements", "userStories", "acceptanceCriteria", "risks", "assumptions", "openQuestions"],
+  "required": ["businessGoals", "requirements", "conflicts", "userStories", "acceptanceCriteria", "risks", "assumptions", "openQuestions"],
   "properties": {
+    "businessGoals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "text"],
+        "properties": {
+          "id": { "type": "string", "description": "short id, e.g. BG1" },
+          "text": { "type": "string", "description": "one business outcome the notes describe wanting, in plain language" }
+        }
+      }
+    },
     "requirements": {
       "type": "array",
       "items": {
@@ -44,6 +56,24 @@
           "given": { "type": "string" },
           "when": { "type": "string" },
           "then": { "type": "string" }
+        }
+      }
+    },
+    "conflicts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "description", "involves", "recommendation"],
+        "properties": {
+          "id": { "type": "string", "description": "short id, e.g. CFL1" },
+          "description": { "type": "string", "description": "the contradiction in plain language: what says what, and where" },
+          "involves": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "short quotes or ticket/reference labels for each conflicting side"
+          },
+          "recommendation": { "type": "string", "description": "who to confirm with or how to resolve it - never resolve it yourself" }
         }
       }
     },

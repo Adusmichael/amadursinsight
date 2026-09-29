@@ -20,11 +20,33 @@ export function docToMarkdown(doc: RequirementsDoc): string {
   lines.push(facts.join("  \n"));
   lines.push("");
 
+  lines.push("## Business goals");
+  lines.push("");
+  if (doc.businessGoals.length === 0) {
+    lines.push("_None stated in the notes._");
+  } else {
+    for (const g of doc.businessGoals) lines.push(`- **${g.id}** ${g.text}`);
+  }
+  lines.push("");
+
   lines.push("## Requirements");
   lines.push("");
   for (const r of doc.requirements) {
     const flag = r.status === "edited" ? " _(edited)_" : "";
     lines.push(`- **${r.id}** (${REQUIREMENT_KIND_LABEL[r.kind]}) ${r.text}${flag}`);
+  }
+  lines.push("");
+
+  lines.push("## Conflicts");
+  lines.push("");
+  if (doc.conflicts.length === 0) {
+    lines.push("_None found between the notes and any backlog provided._");
+  } else {
+    for (const c of doc.conflicts) {
+      lines.push(`- **${c.id}** ${c.description}`);
+      if (c.involves.length) lines.push(`  - Involves: ${c.involves.join(" · ")}`);
+      lines.push(`  - Resolve by: ${c.recommendation}`);
+    }
   }
   lines.push("");
 

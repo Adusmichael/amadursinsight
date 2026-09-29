@@ -8,11 +8,14 @@ import { GenerationProgress } from "./generation-progress";
 const MIN_CHARS = 40;
 const MAX_CHARS = 15000;
 
+const MAX_BACKLOG_CHARS = 15000;
+
 export interface GeneratePayload {
   notes: string;
   projectName: string;
   stakeholders: string;
   meetingDate: string;
+  backlog: string;
 }
 
 const fieldClass =
@@ -31,10 +34,12 @@ export function InputPanel({
   const [projectName, setProjectName] = useState("");
   const [stakeholders, setStakeholders] = useState("");
   const [meetingDate, setMeetingDate] = useState("");
+  const [backlog, setBacklog] = useState("");
 
   const count = notes.length;
   const tooLong = count > MAX_CHARS;
-  const canGenerate = count >= MIN_CHARS && !tooLong && !busy;
+  const backlogTooLong = backlog.length > MAX_BACKLOG_CHARS;
+  const canGenerate = count >= MIN_CHARS && !tooLong && !backlogTooLong && !busy;
 
   let counter: React.ReactNode;
   if (tooLong) {
@@ -112,6 +117,26 @@ export function InputPanel({
           </label>
         </div>
 
+        <div className="mt-4 border-t border-rule pt-4">
+          <FieldLabel>Existing backlog / tickets (optional)</FieldLabel>
+          <p className="mt-0.5 mb-2 text-[0.78rem] leading-relaxed text-ink-faint">
+            Paste ticket titles or a CSV export. Anything here that contradicts the notes above
+            &mdash; or contradicts itself &mdash; is surfaced as a Conflict, never silently resolved.
+          </p>
+          <textarea
+            value={backlog}
+            onChange={(event) => setBacklog(event.target.value)}
+            rows={5}
+            placeholder="e.g. rows from Backlog_Export_Conflicting_Tickets.csv&hellip;"
+            className="w-full resize-y rounded-md border border-rule-strong bg-paper p-3 font-mono text-[0.82rem] leading-relaxed text-ink focus:border-accent focus:outline-none"
+          />
+          {backlogTooLong && (
+            <p className="mt-1 font-mono text-[0.68rem] text-flag">
+              {backlog.length.toLocaleString()} / {MAX_BACKLOG_CHARS.toLocaleString()} &mdash; trim to generate
+            </p>
+          )}
+        </div>
+
         {error && (
           <p className="mt-3 rounded-md border border-flag/40 bg-flag-wash px-3 py-2 text-[0.82rem] text-flag">
             {error}
@@ -123,7 +148,7 @@ export function InputPanel({
             variant="solid"
             disabled={!canGenerate}
             className="h-9 px-4"
-            onClick={() => onGenerate({ notes, projectName, stakeholders, meetingDate })}
+            onClick={() => onGenerate({ notes, projectName, stakeholders, meetingDate, backlog })}
           >
             {busy ? "Generating…" : "Generate requirements"}
           </Btn>

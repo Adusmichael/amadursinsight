@@ -1,10 +1,12 @@
 # AmadursInsight
 
-Paste raw stakeholder meeting notes, get back a structured **first-draft
-requirements document** — requirements (classified), user stories, acceptance
-criteria, risks, assumptions, open questions — with each item linked to its
-parent. Edit a requirement and the app flags every downstream story and
-criterion that now needs review.
+Paste raw stakeholder meeting notes (and, optionally, an existing backlog or
+ticket export), get back a structured **first-draft requirements document** —
+business goals, requirements (classified), conflicts between the notes and the
+backlog, user stories, acceptance criteria, risks, assumptions, open questions
+— with each item linked to its parent. Edit a requirement and the app flags
+every downstream story and criterion that now needs review. Conflicts are
+never silently resolved — each one gets a recommendation for who to ask.
 
 A single-feature portfolio project. See **Design decisions** (`/about`) for what
 it deliberately leaves out and why.

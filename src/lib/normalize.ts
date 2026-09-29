@@ -12,6 +12,7 @@ import {
   PRIORITIES,
   REQUIREMENT_KINDS,
   type AcceptanceCriterion,
+  type Conflict,
   type DocMeta,
   type LabeledItem,
   type Priority,
@@ -116,6 +117,18 @@ export function normalizeModelDoc(raw: unknown, meta: MetaInput): RequirementsDo
       .filter(Boolean)
       .map((text, index) => ({ id: `${prefix}${index + 1}`, text }));
 
+  // --- conflicts: distinct requirement/ticket contradictions, never auto-resolved ---
+  const conflicts: Conflict[] = arr(bag.conflicts)
+    .map((c) => ({
+      description: str(c.description),
+      recommendation: str(c.recommendation),
+      involves: Array.isArray(c.involves)
+        ? c.involves.map((v) => str(v)).filter(Boolean)
+        : [],
+    }))
+    .filter((c) => c.description.length > 0 && c.recommendation.length > 0)
+    .map((c, index) => ({ id: `CFL${index + 1}`, ...c }));
+
   const docMeta: DocMeta = {
     projectName: meta.projectName.trim() || null,
     stakeholders: meta.stakeholders
@@ -128,7 +141,9 @@ export function normalizeModelDoc(raw: unknown, meta: MetaInput): RequirementsDo
 
   return {
     meta: docMeta,
+    businessGoals: labeled(bag.businessGoals, "BG"),
     requirements,
+    conflicts,
     userStories,
     acceptanceCriteria,
     risks: labeled(bag.risks, "RSK"),

@@ -104,5 +104,46 @@ describe("normalizeModelDoc", () => {
     expect(() => normalizeModelDoc(null, META)).not.toThrow();
     expect(() => normalizeModelDoc({ requirements: "nope" }, META)).not.toThrow();
     expect(normalizeModelDoc({}, META).requirements).toEqual([]);
+    expect(normalizeModelDoc({}, META).businessGoals).toEqual([]);
+    expect(normalizeModelDoc({}, META).conflicts).toEqual([]);
+  });
+
+  it("regenerates business goal ids and drops blanks", () => {
+    const raw = {
+      requirements: [],
+      userStories: [],
+      acceptanceCriteria: [],
+      risks: [],
+      assumptions: [],
+      openQuestions: [],
+      businessGoals: [{ id: "x", text: "" }, { id: "y", text: "Cut booking time in half." }],
+    };
+    const doc = normalizeModelDoc(raw, META);
+    expect(doc.businessGoals).toEqual([{ id: "BG1", text: "Cut booking time in half." }]);
+  });
+
+  it("keeps only conflicts with both a description and a recommendation, and regenerates ids", () => {
+    const raw = {
+      requirements: [],
+      userStories: [],
+      acceptanceCriteria: [],
+      risks: [],
+      assumptions: [],
+      openQuestions: [],
+      conflicts: [
+        {
+          id: "x",
+          description: "Ticket #12 asks for SMS reminders; the notes say that's out of scope.",
+          involves: ["Ticket #12", "meeting notes"],
+          recommendation: "Confirm scope with the product owner.",
+        },
+        { id: "y", description: "No recommendation given", involves: [], recommendation: "" },
+        { id: "z", description: "", involves: [], recommendation: "No description given" },
+      ],
+    };
+    const doc = normalizeModelDoc(raw, META);
+    expect(doc.conflicts).toHaveLength(1);
+    expect(doc.conflicts[0].id).toBe("CFL1");
+    expect(doc.conflicts[0].involves).toEqual(["Ticket #12", "meeting notes"]);
   });
 });

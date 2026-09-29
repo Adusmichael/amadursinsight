@@ -20,6 +20,10 @@ function fail(int $status, string $message): void {
     exit;
 }
 
+function charLen(string $s): int {
+    return function_exists('mb_strlen') ? mb_strlen($s) : strlen($s);
+}
+
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
     fail(405, 'Use POST.');
 }
@@ -49,13 +53,17 @@ if ($apiKey === '') {
 $raw = file_get_contents('php://input');
 $body = json_decode($raw, true);
 $notes = is_array($body) ? trim((string) ($body['notes'] ?? '')) : '';
+$backlog = is_array($body) ? trim((string) ($body['backlog'] ?? '')) : '';
 
-$len = function_exists('mb_strlen') ? mb_strlen($notes) : strlen($notes);
+$len = charLen($notes);
 if ($len < 40) {
     fail(400, 'Add more detail to the notes before generating.');
 }
 if ($len > 15000) {
     fail(400, 'Notes exceed the 15,000-character limit.');
+}
+if (charLen($backlog) > 15000) {
+    fail(400, 'The backlog/tickets text exceeds the 15,000-character limit.');
 }
 
 /* ---- schema (shared with the TypeScript client) ---- */
@@ -68,6 +76,11 @@ if (!is_array($schema)) {
 $system = @file_get_contents(__DIR__ . '/system-prompt.txt');
 if ($system === false || trim($system) === '') {
     fail(500, 'Server prompt file is missing.');
+}
+
+$userContent = "Meeting notes:\n\n" . $notes;
+if ($backlog !== '') {
+    $userContent .= "\n\nExisting backlog / tickets (may conflict with the notes above or with each other):\n\n" . $backlog;
 }
 
 $payload = [
@@ -83,7 +96,7 @@ $payload = [
         'input_schema' => $schema,
     ]],
     'tool_choice'   => ['type' => 'tool', 'name' => 'record_requirements'],
-    'messages'      => [['role' => 'user', 'content' => "Meeting notes:\n\n" . $notes]],
+    'messages'      => [['role' => 'user', 'content' => $userContent]],
 ];
 
 $headers = [

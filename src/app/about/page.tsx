@@ -32,24 +32,28 @@ export default function AboutPage() {
 
       <H>What it produces</H>
       <p className="text-[0.92rem] leading-relaxed text-ink-soft">
-        Six artifact types, because together they cover the &ldquo;what and how do we prove it&rdquo;
-        of early analysis: <strong className="text-ink">requirements</strong> (classified as
+        Eight artifact types, because together they cover the &ldquo;what, why, and how do we
+        prove it&rdquo; of early analysis: <strong className="text-ink">business goals</strong>{" "}
+        stated in the notes, <strong className="text-ink">requirements</strong> (classified as
         functional, non-functional, business rule, or constraint),{" "}
-        <strong className="text-ink">user stories</strong> for each functional requirement,{" "}
-        <strong className="text-ink">acceptance criteria</strong> in Given/When/Then form, and{" "}
-        <strong className="text-ink">risks, assumptions, and open questions</strong> so the gaps in
-        the notes are named rather than filled in.
+        <strong className="text-ink">conflicts</strong> &mdash; contradictions the notes (or an
+        optional pasted backlog/ticket list) surface, each with a recommended resolution rather
+        than a silent pick, <strong className="text-ink">user stories</strong> for each functional
+        requirement, <strong className="text-ink">acceptance criteria</strong> in
+        Given/When/Then form, and <strong className="text-ink">risks, assumptions, and open
+        questions</strong> so the gaps in the notes are named rather than filled in.
       </p>
 
       <H>What the app does, and what the model does</H>
       <p className="text-[0.92rem] leading-relaxed text-ink-soft">
         A language model does the extraction &mdash; pattern-matching cannot pull requirements out of
         messy prose. The app&rsquo;s contribution is the structure it imposes: the artifact types,
-        the required formats, and the instruction to surface gaps instead of inventing detail.
-        The <strong className="text-ink">change-impact</strong> step is the opposite &mdash; fully
-        deterministic. Links between requirement, story, and criterion are captured at generation;
-        editing a requirement walks that graph and flags every affected item for review. No model
-        call is involved.
+        the required formats, and the instruction to surface gaps and contradictions instead of
+        inventing detail or picking a side. The <strong className="text-ink">change-impact</strong>{" "}
+        step is the opposite &mdash; fully deterministic. Links between requirement, story, and
+        criterion are captured at generation; editing a requirement walks that graph and flags
+        every affected item for review. No model call is involved. Nothing here ships to a backlog
+        on its own &mdash; every item is a draft the human reviews, edits, and exports by hand.
       </p>
 
       <H>What it deliberately leaves out</H>
