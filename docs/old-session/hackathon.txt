@@ -1,0 +1,91 @@
+
+
+None 
+Track: Business Analysis  
+Target Entity: Enterprise Operations & Product Delivery Team 
+Participant Goal: Build an AI-powered solution that transforms raw stakeholder input into 
+structured requirements, redesign the BA workflow to embed human oversight, and map the 
+career evolution of the modern Business Analyst. 
+1. Executive Summary & Challenge Statement 
+Generative AI models can now instantly synthesize raw meeting transcripts, parse Jira 
+backlogs, and write formal requirements documents (BRDs) with Given/When/Then user 
+stories—tasks that traditionally consumed 60–70% of a Junior or Mid-level BA's workload. 
+However, unvetted AI output introduces significant business risks: hallucinated edge cases, 
+missed non-functional requirements, unaddressed stakeholder conflicts, and lack of 
+accountability. 
+Your Mission: As a Business Analyst, you must build a working prototype that automates 
+first-draft requirements extraction while engineering a redesigned BA workflow. Your solution 
+must establish explicit human-in-the-loop validation checkpoints, proving that AI 
+redefines—rather than eliminates—the BA profession. 
+2. Background & AS-IS Pain Points 
+● Documentation Latency: BAs spend hours manually translating raw, ambiguous 
+meeting notes into formal BRDs and Jira user stories, delaying sprint start dates. 
+● Conflicting Requirements: Stakeholders often express contradictory needs during calls 
+that BAs must manually spot and resolve. 
+● Rework & Scope Creep: Misinterpreting stakeholder intent leads to incomplete 
+acceptance criteria and costly late-stage development changes. 
+● Administrative Burnout: BAs spend more time formatting documents and writing 
+stories than facilitating strategic conversations or solving business problems. 
+3. Data & Resource Package (Starter Kit Provided) 
+You have been provided with the following assets in your starter kit: 
+├── Briefs/ 
+│   ├── Business_Problem_Brief.pdf 
+
+│   └── Personas_JuniorBA_SeniorBA_BAPracticeLead.pdf 
+├── Data/ 
+│   ├── Stakeholder_Interview_Transcript.txt 
+│   └── Backlog_Export_Conflicting_Tickets.csv 
+└── Templates/ 
+    ├── Blank_BRD_Template.docx 
+    ├── MoSCoW_GivenWhenThen_Template.md 
+    └── Sample_Workflow_Swimlanes.drawio 
+Stakeholder Personas 
+● Junior BA: Overburdened by routine documentation; fears job redundancy due to LLM 
+content generation. 
+● Senior BA: Spends excessive time reviewing low-quality first drafts; wants to focus on 
+domain architecture and stakeholder alignment. 
+● BA Practice Lead: Needs standard governance, risk mitigation for AI hallucinations, and 
+a clear reskilling pathway for the department. 
+4. Participant Tasks & Requirements 
+To complete the case study, your team must execute the following four core modules: 
+Task A: Automated Requirements Extraction Prototype 
+● Build a working script, dashboard, or tool that takes 
+Stakeholder_Interview_Transcript.txt
+ as input. 
+● Auto-generate a structured Draft BRD containing business goals, functional 
+requirements, and assumptions. 
+● Output at least 5 user stories formatted in standard Given / When / Then acceptance 
+criteria with MoSCoW prioritization tags. 
+Task B: BA Workflow Redesign (AS-IS vs. TO-BE) 
+● Map the AS-IS BA Process: Show the current time-consuming, manual steps from initial 
+meeting to approved backlog item. 
+● Map the TO-BE AI-Augmented Process: Introduce a dedicated AI/Digital Automation 
+Lane alongside a Human BA Checkpoint Lane. 
+● Show clearly where AI generates the first draft and where the human BA reviews, 
+validates, and refines. 
+
+Task C: Human-in-the-Loop Safeguard Engineering 
+● Define at least one explicit Safeguard Protocol preventing unverified AI output from 
+moving directly to development. 
+● Detail mechanisms for detecting AI hallucinations, resolving conflicting stakeholder 
+requirements from logs, and ensuring compliance. 
+Task D: One-Page BA Reskilling Brief 
+● Formulate a strategic 1-page recommendation detailing how the BA skill set must 
+evolve. 
+● Highlight the transition from Manual Documenter & Story Writer to AI Requirements 
+Architect, Strategic Facilitator, & Quality Governor. 
+5. Submission Artifacts Checklist 
+Before the submission deadline, your team must upload the following deliverables: 
+● AS-IS Process Map: Detailed workflow of the traditional manual BA requirements cycle. 
+● TO-BE Process Map: Redesigned workflow featuring an explicit AI Lane and Human 
+BA Checkpoints. 
+● Working Prototype / Script / Dashboard: Tool that ingests raw transcripts and 
+generates requirements. 
+● Sample AI Requirements Artifact: Generated BRD excerpt and set of 5 
+Given/When/Then user stories. 
+● Human-in-the-Loop Safeguard Description: Documented protocol for AI verification 
+and error checking. 
+● One-Page BA Reskilling Brief: Skill evolution roadmap for the future BA workforce. 
+● 5-Minute Pitch Deck: Presentation summarizing problem, technical execution, workflow 
+transformation, and ROI. 
+ 

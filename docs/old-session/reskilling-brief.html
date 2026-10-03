@@ -1,0 +1,168 @@
+<title>BA Reskilling Brief</title>
+<meta name="description" content="One-page strategy brief: how the Business Analyst skill set evolves once AI drafts the first-pass documentation." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" />
+
+<style>
+  :root {
+    --paper: #FBFAF8;
+    --surface: #FFFFFF;
+    --code-bg: #F4F2EC;
+    --ink: #1C2026;
+    --ink-soft: #565D6B;
+    --ink-faint: #878D99;
+    --rule: #E6E3DC;
+    --rule-strong: #D3CFC5;
+    --accent: #2F5D7C;
+    --accent-ink: #244B64;
+    --accent-wash: #ECF2F6;
+    --flag: #A2551F;
+    --flag-wash: #F6EDE4;
+    --good: #386E51;
+    --good-wash: #E9F0EB;
+    --grid: rgba(28, 32, 38, 0.035);
+
+    --f-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --f-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+    --f-mono: "IBM Plex Mono", "SF Mono", ui-monospace, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #13161B; --surface: #1A1E24; --code-bg: #0F1217;
+      --ink: #E7E6E2; --ink-soft: #A3A9B3; --ink-faint: #767C87;
+      --rule: #2A2F37; --rule-strong: #3A414B;
+      --accent: #7CB0CC; --accent-ink: #9EC8DD; --accent-wash: #1B2A33;
+      --flag: #D28C5D; --flag-wash: #2B2018;
+      --good: #71AB8C; --good-wash: #19241E;
+      --grid: rgba(231, 230, 226, 0.04);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #13161B; --surface: #1A1E24; --code-bg: #0F1217;
+    --ink: #E7E6E2; --ink-soft: #A3A9B3; --ink-faint: #767C87;
+    --rule: #2A2F37; --rule-strong: #3A414B;
+    --accent: #7CB0CC; --accent-ink: #9EC8DD; --accent-wash: #1B2A33;
+    --flag: #D28C5D; --flag-wash: #2B2018;
+    --good: #71AB8C; --good-wash: #19241E;
+    --grid: rgba(231, 230, 226, 0.04);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background-color: var(--paper);
+    background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 26px 26px; background-position: -1px -1px;
+    color: var(--ink); font-family: var(--f-body); font-size: 15.5px; line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: var(--accent); color: var(--surface); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  main { max-width: 54rem; margin: 0 auto; padding: clamp(1.6rem, 5vw, 2.6rem) clamp(1rem, 4vw, 1.5rem) 3rem; }
+
+  .kicker { font-family: var(--f-mono); font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); }
+  h1 { font-family: var(--f-display); font-weight: 700; font-size: clamp(1.5rem, 4vw, 1.95rem); line-height: 1.1; letter-spacing: -0.02em; text-wrap: balance; margin: 0.4rem 0 0.7rem; }
+  .lede { font-size: 0.92rem; color: var(--ink-soft); max-width: 44rem; margin: 0 0 1.2rem; }
+
+  .stat-row { display: flex; flex-wrap: wrap; gap: 0.5rem 1.6rem; font-family: var(--f-mono); font-size: 0.7rem; color: var(--ink-faint); padding: 0.8rem 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); margin-bottom: 1.6rem; }
+  .stat-row b { color: var(--accent-ink); font-weight: 600; }
+
+  h2.section { font-family: var(--f-display); font-weight: 600; font-size: 0.98rem; letter-spacing: -0.005em; margin: 1.8rem 0 0.8rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--ink); }
+
+  .roles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.9rem; }
+  @media (max-width: 700px) { .roles { grid-template-columns: 1fr; } }
+  .role { border: 1px solid var(--rule); background: var(--surface); border-radius: 4px; padding: 0.9rem 1rem; }
+  .role .from { font-family: var(--f-mono); font-size: 0.62rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--flag); text-decoration: line-through; text-decoration-color: var(--flag); opacity: 0.85; }
+  .role .to { font-family: var(--f-display); font-weight: 600; font-size: 0.95rem; color: var(--ink); margin: 0.3rem 0 0.5rem; }
+  .role p { font-size: 0.83rem; color: var(--ink-soft); margin: 0; }
+
+  .tbl-wrap { border: 1px solid var(--rule); border-radius: 3px; overflow: hidden; overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.82rem; }
+  th, td { text-align: left; padding: 0.5rem 0.65rem; vertical-align: top; border-bottom: 1px solid var(--rule); }
+  th { font-family: var(--f-mono); font-size: 0.6rem; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-faint); background: var(--code-bg); }
+  tr:last-child td { border-bottom: none; }
+  td.old { color: var(--ink-faint); }
+  .arrow { color: var(--accent-ink); font-family: var(--f-mono); padding: 0 0.3rem; }
+
+  .personas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.7rem; margin-top: 0.2rem; }
+  @media (max-width: 700px) { .personas { grid-template-columns: 1fr; } }
+  .persona { background: var(--accent-wash); border-radius: 4px; padding: 0.7rem 0.85rem; font-size: 0.8rem; color: var(--ink); }
+  .persona b { font-family: var(--f-mono); font-size: 0.62rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent-ink); display: block; margin-bottom: 0.3rem; }
+
+  .close { margin-top: 1.8rem; padding: 0.95rem 1.1rem; border-left: 3px solid var(--good); background: var(--good-wash); border-radius: 0 3px 3px 0; font-size: 0.88rem; color: var(--ink); }
+
+  footer { margin-top: 1.8rem; padding-top: 0.9rem; border-top: 1px solid var(--rule); font-family: var(--f-mono); font-size: 0.66rem; color: var(--ink-faint); }
+</style>
+
+<main>
+  <p class="kicker">Business Analysis Hackathon &middot; Task D deliverable</p>
+  <h1>BA Reskilling Brief</h1>
+  <p class="lede">
+    Generative AI now drafts BRDs and Given/When/Then stories in seconds &mdash; work that consumed
+    60&ndash;70% of a Junior or Mid-level BA's time. That time doesn't disappear. It moves to the
+    three things AI still can't do: designing the extraction contract, facilitating the humans, and
+    deciding what's good enough to ship.
+  </p>
+
+  <div class="stat-row">
+    <span><b>60&ndash;70%</b> of BA time was manual drafting</span>
+    <span><b>0</b> of that time is reclaimed automatically &mdash; it has to be redeployed on purpose</span>
+    <span><b>3</b> new roles replace 1 old one</span>
+  </div>
+
+  <h2 class="section">Where the hours go instead</h2>
+  <div class="roles">
+    <div class="role">
+      <span class="from">was: manual documenter</span>
+      <div class="to">AI Requirements Architect</div>
+      <p>Designs the extraction contract &mdash; the schema, the prompt rules, what counts as a
+      well-formed requirement &mdash; instead of typing every BRD by hand. Owns what "good
+      output" means for the whole team, not just their own drafts.</p>
+    </div>
+    <div class="role">
+      <span class="from">was: story writer</span>
+      <div class="to">Strategic Facilitator</div>
+      <p>Spends the reclaimed hours in the room, not at the keyboard: running alignment
+      conversations, and now specifically resolving the Conflicts an AI draft surfaces &mdash;
+      a facilitation job that didn't used to have a named artifact to work from.</p>
+    </div>
+    <div class="role">
+      <span class="from">was: format checker</span>
+      <div class="to">Quality Governor</div>
+      <p>Reviews AI drafts against real domain knowledge, catches hallucinated edge cases and
+      missed non-functional requirements, and owns the sign-off record &mdash; the accountability
+      an unreviewed AI draft doesn't have on its own.</p>
+    </div>
+  </div>
+
+  <h2 class="section">The skill shift, concretely</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Goes from being the job</th><th></th><th>To being the check</th></tr></thead>
+      <tbody>
+        <tr><td class="old">Writing Given/When/Then by hand</td><td class="arrow">&rarr;</td><td>Judging whether generated criteria actually verify the story</td></tr>
+        <tr><td class="old">Typing up meeting notes into a BRD</td><td class="arrow">&rarr;</td><td>Designing what the extraction should classify and why</td></tr>
+        <tr><td class="old">Noticing a stakeholder contradiction mid-meeting</td><td class="arrow">&rarr;</td><td>Owning the resolution once a contradiction is surfaced for you</td></tr>
+        <tr><td class="old">Reformatting documents to house style</td><td class="arrow">&rarr;</td><td>Setting the house style as a schema, once, for every future draft</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="section">What changes for each of you</h2>
+  <div class="personas">
+    <div class="persona"><b>Junior BA</b>Job redundancy fear is the wrong frame: the routine 70% moves to you as a review skill, not away from you as a task. Line-by-line verification against source notes is now the entry-level craft.</div>
+    <div class="persona"><b>Senior BA</b>Less time rescuing bad first drafts, more time on domain architecture and the Conflicts queue &mdash; the part of the job AI hands you instead of taking from you.</div>
+    <div class="persona"><b>BA Practice Lead</b>Governance shifts from reviewing documents to reviewing the prompt and schema that produce them &mdash; one artifact to govern instead of hundreds of drafts.</div>
+  </div>
+
+  <p class="close">
+    AI redefines the BA profession; it doesn't remove it. The draft was never the valuable part of
+    the job &mdash; the judgment about whether the draft is right was. That judgment is the whole
+    job now.
+  </p>
+
+  <footer>AmadursInsight &middot; BA Reskilling Brief &middot; prepared for hackathon submission</footer>
+</main>

@@ -1,0 +1,246 @@
+<title>HITL Safeguard Protocol</title>
+<meta name="description" content="How AmadursInsight prevents unverified AI requirements output from reaching development — the mechanism, the sign-off chain, and its honest limits." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" />
+
+<style>
+  /* Layout: masthead + numbered mechanism cards (one per safeguard) + a
+     role/sign-off table + a named-limits close. Same drafting-paper identity
+     as the product spec, since this document describes that same product. */
+  :root {
+    --paper: #FBFAF8;
+    --surface: #FFFFFF;
+    --code-bg: #F4F2EC;
+    --ink: #1C2026;
+    --ink-soft: #565D6B;
+    --ink-faint: #878D99;
+    --rule: #E6E3DC;
+    --rule-strong: #D3CFC5;
+    --accent: #2F5D7C;
+    --accent-ink: #244B64;
+    --accent-wash: #ECF2F6;
+    --flag: #A2551F;
+    --flag-wash: #F6EDE4;
+    --good: #386E51;
+    --good-wash: #E9F0EB;
+    --grid: rgba(28, 32, 38, 0.035);
+
+    --f-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --f-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+    --f-mono: "IBM Plex Mono", "SF Mono", ui-monospace, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #13161B; --surface: #1A1E24; --code-bg: #0F1217;
+      --ink: #E7E6E2; --ink-soft: #A3A9B3; --ink-faint: #767C87;
+      --rule: #2A2F37; --rule-strong: #3A414B;
+      --accent: #7CB0CC; --accent-ink: #9EC8DD; --accent-wash: #1B2A33;
+      --flag: #D28C5D; --flag-wash: #2B2018;
+      --good: #71AB8C; --good-wash: #19241E;
+      --grid: rgba(231, 230, 226, 0.04);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #13161B; --surface: #1A1E24; --code-bg: #0F1217;
+    --ink: #E7E6E2; --ink-soft: #A3A9B3; --ink-faint: #767C87;
+    --rule: #2A2F37; --rule-strong: #3A414B;
+    --accent: #7CB0CC; --accent-ink: #9EC8DD; --accent-wash: #1B2A33;
+    --flag: #D28C5D; --flag-wash: #2B2018;
+    --good: #71AB8C; --good-wash: #19241E;
+    --grid: rgba(231, 230, 226, 0.04);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background-color: var(--paper);
+    background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 26px 26px; background-position: -1px -1px;
+    color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: var(--accent); color: var(--surface); }
+  a { color: var(--accent-ink); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  main { max-width: 46rem; margin: 0 auto; padding: clamp(2rem, 6vw, 3.5rem) clamp(1rem, 4vw, 1.5rem) 5rem; }
+
+  .kicker { font-family: var(--f-mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); }
+  h1 { font-family: var(--f-display); font-weight: 700; font-size: clamp(1.7rem, 4.5vw, 2.3rem); line-height: 1.1; letter-spacing: -0.02em; text-wrap: balance; margin: 0.5rem 0 0.9rem; }
+  .lede { font-size: 1rem; color: var(--ink-soft); max-width: 40rem; margin: 0 0 1.6rem; }
+  .meta { display: flex; flex-wrap: wrap; gap: 0.4rem 1.2rem; font-family: var(--f-mono); font-size: 0.72rem; color: var(--ink-faint); padding: 1rem 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); margin-bottom: 2.2rem; }
+  .meta b { color: var(--ink-soft); font-weight: 500; }
+
+  h2.section { font-family: var(--f-display); font-weight: 600; font-size: 1.05rem; letter-spacing: -0.01em; margin: 2.6rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--ink); }
+
+  .mech { display: grid; grid-template-columns: 2.4rem minmax(0,1fr); gap: 0 1.1rem; padding: 1.1rem 0; border-top: 1px solid var(--rule); }
+  .mech:first-of-type { border-top: none; padding-top: 0.3rem; }
+  .mech-n { font-family: var(--f-mono); font-size: 0.78rem; color: var(--accent-ink); padding-top: 0.2rem; }
+  .mech h3 { font-family: var(--f-body); font-weight: 600; font-size: 0.98rem; margin: 0 0 0.4rem; color: var(--ink); }
+  .mech p { margin: 0 0 0.5rem; font-size: 0.9rem; color: var(--ink-soft); max-width: 34rem; }
+  .mech p:last-child { margin-bottom: 0; }
+  .mech .prevents { font-size: 0.78rem; color: var(--flag); margin-bottom: 0.55rem; }
+  .mech .prevents b { font-family: var(--f-mono); font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--flag); margin-right: 0.4rem; }
+  .mono { font-family: var(--f-mono); font-size: 0.86em; color: var(--accent-ink); }
+
+  table { border-collapse: collapse; width: 100%; font-size: 0.86rem; margin: 0.3rem 0 0; }
+  th, td { text-align: left; padding: 0.55rem 0.7rem; vertical-align: top; border-bottom: 1px solid var(--rule); }
+  th { font-family: var(--f-mono); font-size: 0.64rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-faint); background: var(--code-bg); }
+  td:first-child, th:first-child { padding-left: 0.9rem; font-weight: 600; }
+  tr:last-child td { border-bottom: none; }
+  .tbl-wrap { border: 1px solid var(--rule); border-radius: 3px; overflow: hidden; overflow-x: auto; }
+
+  .callout { border-left: 3px solid var(--accent); background: var(--accent-wash); padding: 0.9rem 1.1rem; border-radius: 0 3px 3px 0; font-size: 0.9rem; color: var(--ink); margin-top: 1.2rem; }
+
+  ul.limits { list-style: none; padding: 0; margin: 0; }
+  ul.limits li { position: relative; padding-left: 1.3rem; margin: 0.6rem 0; font-size: 0.9rem; color: var(--ink-soft); }
+  ul.limits li::before { content: "\2013"; position: absolute; left: 0; color: var(--flag); }
+
+  footer { margin-top: 3rem; padding-top: 1.2rem; border-top: 1px solid var(--rule); font-family: var(--f-mono); font-size: 0.7rem; color: var(--ink-faint); }
+</style>
+
+<main>
+  <p class="kicker">Business Analysis Hackathon &middot; Task C deliverable</p>
+  <h1>Human-in-the-Loop Safeguard Protocol</h1>
+  <p class="lede">
+    Unvetted AI output introduces specific, nameable risks: hallucinated edge cases, missed
+    non-functional requirements, unaddressed stakeholder conflicts, and no clear owner of
+    accountability. This protocol describes the six mechanisms AmadursInsight uses to keep a
+    human answerable for every requirement before it reaches a backlog &mdash; and names where
+    those mechanisms currently fall short.
+  </p>
+  <div class="meta">
+    <span><b>Prototype</b> AmadursInsight &mdash; notes/backlog &rarr; requirements</span>
+    <span><b>Scope</b> Task A extraction pipeline</span>
+    <span><b>Owner of this protocol</b> BA Practice Lead</span>
+  </div>
+
+  <h2 class="section">The six mechanisms</h2>
+
+  <div class="mech">
+    <span class="mech-n">01</span>
+    <div>
+      <h3>Forced, strict-schema output</h3>
+      <p class="prevents"><b>Prevents</b> free-text hallucination bleeding into the deliverable</p>
+      <p>The model is not asked to "write a BRD" &mdash; it is forced to call one tool
+      (<span class="mono">record_requirements</span>) whose input must validate exactly against a
+      fixed JSON schema (<span class="mono">strict: true</span>, <span class="mono">tool_choice</span>
+      pinned to that one tool). There is no path for the model to return prose, markdown, or a
+      field that doesn't fit the contract. Every requirement, story, and criterion that exists in
+      the output exists because it filled a required, typed slot &mdash; not because the model
+      decided to mention it.</p>
+    </div>
+  </div>
+
+  <div class="mech">
+    <span class="mech-n">02</span>
+    <div>
+      <h3>Gaps become questions, not answers</h3>
+      <p class="prevents"><b>Prevents</b> invented detail, fabricated metrics, guessed acceptance thresholds</p>
+      <p>The extraction prompt is explicit: where the notes give no target ("make it faster"),
+      record the ambiguity as an open question rather than supplying a number. The same rule
+      governs assumptions and non-functional requirements &mdash; if the source material doesn't
+      state it, the model is instructed to say so, not to fill the gap with something plausible.
+      This is a hallucination <em>reduction</em> mechanism, not a hallucination <em>detector</em>
+      &mdash; see Limitations.</p>
+    </div>
+  </div>
+
+  <div class="mech">
+    <span class="mech-n">03</span>
+    <div>
+      <h3>Conflict detection, never auto-resolved</h3>
+      <p class="prevents"><b>Prevents</b> unaddressed stakeholder conflicts shipping silently into a sprint</p>
+      <p>An optional second input accepts an existing backlog or ticket export. The model checks
+      it against the meeting notes &mdash; and against itself &mdash; for contradictions: two
+      stakeholders wanting opposite behaviour, a ticket asking for something the notes rule out,
+      two tickets that can't both be true. Each conflict is returned as its own artifact:
+      <span class="mono">description</span>, the exact sides in <span class="mono">involves</span>,
+      and a <span class="mono">recommendation</span> naming who to ask. The prompt forbids the
+      model from picking a side. A conflict with no named resolver is dropped rather than guessed.</p>
+    </div>
+  </div>
+
+  <div class="mech">
+    <span class="mech-n">04</span>
+    <div>
+      <h3>"First draft" framing, no auto-publish</h3>
+      <p class="prevents"><b>Prevents</b> a draft being mistaken for an approved spec, or shipped without a human touching it</p>
+      <p>Every generated document is labelled, in the UI itself, as a first draft to refine &mdash;
+      not a finished specification. There is no "push to Jira" or "publish" action anywhere in the
+      tool. The only way a document leaves is a human choosing Copy or Download, at which point
+      responsibility for its content transfers explicitly to them.</p>
+    </div>
+  </div>
+
+  <div class="mech">
+    <span class="mech-n">05</span>
+    <div>
+      <h3>Deterministic change-impact, not another model call</h3>
+      <p class="prevents"><b>Prevents</b> a human's correction being silently reinterpreted or overwritten by AI</p>
+      <p>Once a human edits a requirement, the app walks a plain in-memory graph (parent/child IDs
+      captured at generation) and flags every downstream user story and acceptance criterion as
+      review-needed. No model is called to do this. A human's edit cannot be quietly
+      "smoothed over" by a second AI pass &mdash; the flag is mechanical and the review is manual.</p>
+    </div>
+  </div>
+
+  <div class="mech">
+    <span class="mech-n">06</span>
+    <div>
+      <h3>Inspectable, versioned extraction logic</h3>
+      <p class="prevents"><b>Prevents</b> "the AI decided" as an unaccountable answer</p>
+      <p>The schema and system prompt that define what the model is allowed to return are plain
+      text files in the project repository, not hidden configuration. For any submitted document,
+      the exact extraction contract used to produce it can be pulled up, read, and reproduced.
+      Governance change control applies to the prompt the same way it would to a policy document.</p>
+    </div>
+  </div>
+
+  <h2 class="section">Who signs off on what</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Role</th><th>Reviews</th><th>Before it may proceed</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Junior&nbsp;BA</td>
+          <td>Every requirement, story, and criterion line by line against the source notes</td>
+          <td>Marks each item reviewed; corrects wording in place (the tool's own edit step)</td>
+        </tr>
+        <tr>
+          <td>Senior&nbsp;BA</td>
+          <td>The Conflicts section specifically, plus a spot-check of Assumptions and Open Questions</td>
+          <td>Confirms each conflict has been routed to the named resolver &mdash; not resolved by guesswork</td>
+        </tr>
+        <tr>
+          <td>BA&nbsp;Practice&nbsp;Lead</td>
+          <td>The extraction prompt and schema themselves (governance, not individual documents)</td>
+          <td>Owns what "reviewed" means org-wide; any prompt change goes through the same change control as a BRD template</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="callout">
+    Nothing produced by this prototype is treated as approved until a named human has signed off
+    at the level above. The tool has no concept of "approved" &mdash; that status lives outside it,
+    in whatever system of record the organisation already uses.
+  </p>
+
+  <h2 class="section">Named limitations</h2>
+  <ul class="limits">
+    <li>Mechanism 02 reduces invented detail by instruction; it is not an independent hallucination
+    check. A second, differently-prompted model pass to cross-examine the first draft would be a
+    stronger guarantee and is not yet built.</li>
+    <li>Conflict detection (03) only sees what is pasted into the backlog field. It does not
+    connect live to Jira, so a conflicting ticket the reviewer forgets to paste in is invisible to it.</li>
+    <li>The protocol assumes the three sign-off roles above are staffed and distinct. In a team of
+    one, the same person plays all three &mdash; which is workable, but removes the
+    second-reviewer effect the table is designed to give.</li>
+    <li>Compliance record-keeping (who reviewed what, when) is a process today, not a logged
+    feature of the tool. Formalising it as an audit trail is the natural next build.</li>
+  </ul>
+
+  <footer>AmadursInsight &middot; Human-in-the-Loop Safeguard Protocol &middot; prepared for hackathon submission</footer>
+</main>

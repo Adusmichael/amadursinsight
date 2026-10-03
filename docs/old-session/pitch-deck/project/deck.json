@@ -1,0 +1,17 @@
+{
+  "v": 4,
+  "createdOnFiles": { "v": 1, "at": "2026-09-29T18:00:00Z" },
+  "title": "AmadursInsight Pitch Deck",
+  "order": ["cover", "problem", "solution", "conflict", "workflow", "safeguards", "reskilling", "close"],
+  "sections": {
+    "s1": { "description": "The risk of unvetted AI drafting BA work", "start": "cover" },
+    "s2": { "description": "What AmadursInsight does, proven live", "start": "solution" },
+    "s3": { "description": "How humans stay accountable by design", "start": "workflow" },
+    "s4": { "description": "How the BA role evolves, and the ask", "start": "reskilling" }
+  },
+  "faces": {
+    "archivo": { "family": "Archivo", "href": "https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&display=swap" },
+    "ibm-plex-sans": { "family": "IBM Plex Sans", "href": "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" },
+    "ibm-plex-mono": { "family": "IBM Plex Mono", "href": "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" }
+  }
+}

@@ -1,0 +1,269 @@
+<title>AS-IS vs TO-BE Workflow</title>
+<meta name="description" content="Task B: the current manual BA requirements cycle against the AI-augmented redesign, with an explicit AI lane, a human checkpoint lane, and the sign-off gate between them." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" />
+
+<style>
+  :root {
+    --paper: #FBFAF8; --surface: #FFFFFF; --code-bg: #F4F2EC;
+    --ink: #1C2026; --ink-soft: #565D6B; --ink-faint: #878D99;
+    --rule: #E6E3DC; --rule-strong: #D3CFC5;
+    --accent: #2F5D7C; --accent-ink: #244B64; --accent-wash: #ECF2F6;
+    --flag: #A2551F; --flag-wash: #F6EDE4;
+    --good: #386E51; --good-wash: #E9F0EB;
+    --grid: rgba(28,32,38,0.035);
+    --lane-a: #FBFAF8; --lane-b: #F3F1EA;
+    --f-display: "Archivo","Helvetica Neue",Arial,sans-serif;
+    --f-body: "IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+    --f-mono: "IBM Plex Mono","SF Mono",ui-monospace,monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:#13161B; --surface:#1A1E24; --code-bg:#0F1217;
+      --ink:#E7E6E2; --ink-soft:#A3A9B3; --ink-faint:#767C87;
+      --rule:#2A2F37; --rule-strong:#3A414B;
+      --accent:#7CB0CC; --accent-ink:#9EC8DD; --accent-wash:#1B2A33;
+      --flag:#D28C5D; --flag-wash:#2B2018;
+      --good:#71AB8C; --good-wash:#19241E;
+      --grid: rgba(231,230,226,0.04);
+      --lane-a:#13161B; --lane-b:#191D23;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:#13161B; --surface:#1A1E24; --code-bg:#0F1217;
+    --ink:#E7E6E2; --ink-soft:#A3A9B3; --ink-faint:#767C87;
+    --rule:#2A2F37; --rule-strong:#3A414B;
+    --accent:#7CB0CC; --accent-ink:#9EC8DD; --accent-wash:#1B2A33;
+    --flag:#D28C5D; --flag-wash:#2B2018;
+    --good:#71AB8C; --good-wash:#19241E;
+    --grid: rgba(231,230,226,0.04);
+    --lane-a:#13161B; --lane-b:#191D23;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin:0; background-color:var(--paper);
+    background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size:26px 26px; background-position:-1px -1px;
+    color:var(--ink); font-family:var(--f-body); font-size:16px; line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection { background: var(--accent); color: var(--surface); }
+  main { max-width: 62rem; margin: 0 auto; padding: clamp(1.6rem,5vw,3rem) clamp(1rem,4vw,1.5rem) 4rem; }
+  .kicker { font-family: var(--f-mono); font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); }
+  h1 { font-family: var(--f-display); font-weight: 700; font-size: clamp(1.6rem,4.5vw,2.1rem); line-height: 1.1; letter-spacing:-0.02em; text-wrap: balance; margin: 0.4rem 0 0.7rem; }
+  .lede { font-size: 0.92rem; color: var(--ink-soft); max-width: 42rem; margin: 0 0 1.6rem; }
+
+  h2.section { font-family: var(--f-display); font-weight: 600; font-size: 1.05rem; margin: 2.2rem 0 0.4rem; display:flex; align-items:baseline; gap:0.6rem; }
+  h2.section .tag { font-family: var(--f-mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.15rem 0.5rem; border-radius: 3px; }
+  h2.section .tag.old { color: var(--ink-faint); background: var(--code-bg); }
+  h2.section .tag.new { color: var(--accent-ink); background: var(--accent-wash); }
+  p.diagram-note { font-size: 0.85rem; color: var(--ink-soft); max-width: 42rem; margin: 0 0 1rem; }
+
+  .diagram-wrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: 6px; background: var(--surface); padding: 0.5rem; }
+  .diagram-wrap svg { display: block; }
+
+  .legend { display:flex; flex-wrap:wrap; gap: 1.1rem; margin: 0.8rem 0 0; font-size: 0.78rem; color: var(--ink-soft); }
+  .legend span { display:inline-flex; align-items:center; gap:0.4rem; }
+  .legend i { width: 0.7rem; height: 0.7rem; border-radius: 2px; display:inline-block; }
+
+  .close { margin-top: 2.2rem; padding: 0.95rem 1.1rem; border-left: 3px solid var(--accent); background: var(--accent-wash); border-radius: 0 4px 4px 0; font-size: 0.88rem; color: var(--ink); max-width: 42rem; }
+  footer { margin-top: 2.2rem; padding-top: 1rem; border-top: 1px solid var(--rule); font-family: var(--f-mono); font-size: 0.68rem; color: var(--ink-faint); }
+</style>
+
+<main>
+  <p class="kicker">Business Analysis Hackathon &middot; Task B deliverable</p>
+  <h1>AS-IS vs TO-BE Workflow</h1>
+  <p class="lede">
+    The current manual cycle from a raw stakeholder ask to an approved backlog item, redesigned
+    with an explicit AI/Digital Automation lane and a Human BA Checkpoint lane. Every arrow that
+    crosses from automation into the checkpoint lane is a place a human must act before work
+    continues &mdash; the mechanism detailed in the Safeguard Protocol.
+  </p>
+
+  <h2 class="section"><span class="tag old">AS-IS</span> The manual cycle today</h2>
+  <p class="diagram-note">Three lanes. Most of the width belongs to one person doing everything by hand &mdash; and conflicts surface late enough to force rework.</p>
+  <div class="diagram-wrap">
+<svg viewBox="0 0 1150 460" width="1150" height="460" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AS-IS swimlane diagram">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#565D6B"></path>
+    </marker>
+    <marker id="arrowDash" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#A2551F"></path>
+    </marker>
+  </defs>
+
+  <!-- lane bands -->
+  <rect x="0" y="90" width="1150" height="110" fill="#FBFAF8"></rect>
+  <rect x="0" y="200" width="1150" height="110" fill="#F3F1EA"></rect>
+  <rect x="0" y="310" width="1150" height="110" fill="#FBFAF8"></rect>
+  <line x1="0" y1="90" x2="1150" y2="90" stroke="#D3CFC5" stroke-width="1"></line>
+  <line x1="0" y1="200" x2="1150" y2="200" stroke="#D3CFC5" stroke-width="1"></line>
+  <line x1="0" y1="310" x2="1150" y2="310" stroke="#D3CFC5" stroke-width="1"></line>
+  <line x1="0" y1="420" x2="1150" y2="420" stroke="#D3CFC5" stroke-width="1"></line>
+  <line x1="160" y1="90" x2="160" y2="420" stroke="#D3CFC5" stroke-width="1"></line>
+
+  <!-- lane labels -->
+  <text x="20" y="150" font-family="IBM Plex Mono, monospace" font-size="11" letter-spacing="0.06em" fill="#565D6B">STAKEHOLDERS</text>
+  <text x="20" y="260" font-family="IBM Plex Mono, monospace" font-size="11" letter-spacing="0.06em" fill="#565D6B">BUSINESS</text>
+  <text x="20" y="273" font-family="IBM Plex Mono, monospace" font-size="11" letter-spacing="0.06em" fill="#565D6B">ANALYST</text>
+  <text x="20" y="370" font-family="IBM Plex Mono, monospace" font-size="11" letter-spacing="0.06em" fill="#565D6B">DEV / BACKLOG</text>
+
+  <!-- step 0: lane0 -->
+  <g>
+    <rect x="160" y="105" width="160" height="60" rx="5" fill="#FFFFFF" stroke="#D3CFC5"></rect>
+    <text x="240" y="127" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11.5" fill="#1C2026">
+      <tspan x="240" dy="0">Stakeholder meeting</tspan>
+      <tspan x="240" dy="14">&mdash; ambiguous, often</tspan>
+      <tspan x="240" dy="14">contradictory asks</tspan>
+    </text>
+  </g>
+  <!-- step 1: lane1 -->
+  <g>
+    <rect x="360" y="215" width="160" height="60" rx="5" fill="#FFFFFF" stroke="#D3CFC5"></rect>
+    <text x="440" y="237" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11.5" fill="#1C2026">
+      <tspan x="440" dy="0">BA drafts BRD &amp;</tspan>
+      <tspan x="440" dy="14">Jira stories by hand</tspan>
+      <tspan x="440" dy="14">&mdash; hours per project</tspan>
+    </text>
+  </g>
+  <!-- step 2: lane1 -->
+  <g>
+    <rect x="560" y="215" width="160" height="60" rx="5" fill="#F6EDE4" stroke="#A2551F"></rect>
+    <text x="640" y="237" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11.5" fill="#1C2026">
+      <tspan x="640" dy="0">Conflict surfaces</tspan>
+      <tspan x="640" dy="14">late &mdash; BA returns</tspan>
+      <tspan x="640" dy="14">to stakeholders</tspan>
+    </text>
+  </g>
+  <!-- step 3: lane1 -->
+  <g>
+    <rect x="760" y="215" width="160" height="60" rx="5" fill="#FFFFFF" stroke="#D3CFC5"></rect>
+    <text x="840" y="237" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11.5" fill="#1C2026">
+      <tspan x="840" dy="0">BRD / stories</tspan>
+      <tspan x="840" dy="14">reworked &mdash; costly</tspan>
+      <tspan x="840" dy="14">late-stage change</tspan>
+    </text>
+  </g>
+  <!-- step 4: lane2 -->
+  <g>
+    <rect x="960" y="325" width="160" height="60" rx="5" fill="#FFFFFF" stroke="#D3CFC5"></rect>
+    <text x="1040" y="347" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11.5" fill="#1C2026">
+      <tspan x="1040" dy="0">Stories finally enter</tspan>
+      <tspan x="1040" dy="14">backlog &mdash; sprint</tspan>
+      <tspan x="1040" dy="14">start delayed</tspan>
+    </text>
+  </g>
+
+  <!-- arrows -->
+  <path d="M320,135 C340,135 340,245 360,245" fill="none" stroke="#565D6B" stroke-width="1.5" marker-end="url(#arrow)"></path>
+  <path d="M520,245 L560,245" fill="none" stroke="#565D6B" stroke-width="1.5" marker-end="url(#arrow)"></path>
+  <path d="M720,245 L760,245" fill="none" stroke="#565D6B" stroke-width="1.5" marker-end="url(#arrow)"></path>
+  <path d="M920,245 C945,245 945,355 960,355" fill="none" stroke="#565D6B" stroke-width="1.5" marker-end="url(#arrow)"></path>
+  <path d="M600,215 C560,150 380,140 322,138" fill="none" stroke="#A2551F" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#arrowDash)"></path>
+  <text x="470" y="128" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="#A2551F">rework loop &mdash; back to stakeholders</text>
+</svg>
+  </div>
+  <div class="legend">
+    <span><i style="background:#F6EDE4;border:1px solid #A2551F"></i>Where rework / delay originates</span>
+    <span><i style="background:#FFFFFF;border:1px solid #D3CFC5"></i>Manual step</span>
+  </div>
+
+  <h2 class="section"><span class="tag new">TO-BE</span> AI-augmented, with a human gate</h2>
+  <p class="diagram-note">Four lanes. The automation lane drafts in seconds; nothing reaches the backlog without passing through the checkpoint lane &mdash; the sign-off gate is the Safeguard Protocol made visible.</p>
+  <div class="diagram-wrap">
+<svg viewBox="0 0 1560 570" width="1560" height="570" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="TO-BE swimlane diagram">
+  <defs>
+    <marker id="arrow2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#565D6B"></path>
+    </marker>
+    <marker id="arrowGate" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#386E51"></path>
+    </marker>
+  </defs>
+
+  <!-- lane bands -->
+  <rect x="0" y="60" width="1560" height="110" fill="#FBFAF8"></rect>
+  <rect x="0" y="170" width="1560" height="110" fill="#ECF2F6"></rect>
+  <rect x="0" y="280" width="1560" height="110" fill="#F6EDE4"></rect>
+  <rect x="0" y="390" width="1560" height="110" fill="#FBFAF8"></rect>
+  <line x1="0" y1="60" x2="1560" y2="60" stroke="#D3CFC5" stroke-width="1"></line>
+  <line x1="0" y1="170" x2="1560" y2="170" stroke="#D3CFC5" stroke-width="1"></line>
+  <line x1="0" y1="280" x2="1560" y2="280" stroke="#D3CFC5" stroke-width="1"></line>
+  <line x1="0" y1="390" x2="1560" y2="390" stroke="#D3CFC5" stroke-width="1"></line>
+  <line x1="0" y1="500" x2="1560" y2="500" stroke="#D3CFC5" stroke-width="1"></line>
+  <line x1="160" y1="60" x2="160" y2="500" stroke="#D3CFC5" stroke-width="1"></line>
+
+  <!-- lane labels -->
+  <text x="20" y="120" font-family="IBM Plex Mono, monospace" font-size="11" letter-spacing="0.06em" fill="#565D6B">STAKEHOLDERS</text>
+  <text x="20" y="222" font-family="IBM Plex Mono, monospace" font-size="11" letter-spacing="0.06em" fill="#244B64">AI / AUTOMATION</text>
+  <text x="20" y="236" font-family="IBM Plex Mono, monospace" font-size="10" fill="#244B64">LANE</text>
+  <text x="20" y="332" font-family="IBM Plex Mono, monospace" font-size="11" letter-spacing="0.06em" fill="#A2551F">HUMAN BA</text>
+  <text x="20" y="346" font-family="IBM Plex Mono, monospace" font-size="10" fill="#A2551F">CHECKPOINT LANE</text>
+  <text x="20" y="450" font-family="IBM Plex Mono, monospace" font-size="11" letter-spacing="0.06em" fill="#565D6B">DEV / BACKLOG</text>
+
+  <!-- step 0 lane0 -->
+  <g><rect x="160" y="75" width="160" height="60" rx="5" fill="#FFFFFF" stroke="#D3CFC5"></rect>
+    <text x="240" y="97" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11.5" fill="#1C2026">
+      <tspan x="240" dy="0">Stakeholder meeting</tspan><tspan x="240" dy="14">&mdash; notes / transcript</tspan><tspan x="240" dy="14">captured</tspan>
+    </text></g>
+  <!-- step 1 lane1 AI -->
+  <g><rect x="360" y="185" width="160" height="60" rx="5" fill="#FFFFFF" stroke="#2F5D7C" stroke-width="1.5"></rect>
+    <text x="440" y="203" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="#1C2026">
+      <tspan x="440" dy="0">Forced-schema extract:</tspan><tspan x="440" dy="13">goals, requirements,</tspan><tspan x="440" dy="13">conflicts, stories, ACs</tspan><tspan x="440" dy="13" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="#244B64">&mdash; seconds</tspan>
+    </text></g>
+  <!-- step 2 lane2 BA -->
+  <g><rect x="560" y="295" width="160" height="60" rx="5" fill="#FFFFFF" stroke="#A2551F" stroke-width="1.5"></rect>
+    <text x="640" y="317" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="#1C2026">
+      <tspan x="640" dy="0">BA reviews draft;</tspan><tspan x="640" dy="14">resolves flagged</tspan><tspan x="640" dy="14">conflicts with stakeholder</tspan>
+    </text></g>
+  <!-- step 3 lane2 BA -->
+  <g><rect x="760" y="295" width="160" height="60" rx="5" fill="#FFFFFF" stroke="#A2551F" stroke-width="1.5"></rect>
+    <text x="840" y="317" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="#1C2026">
+      <tspan x="840" dy="0">BA edits</tspan><tspan x="840" dy="14">requirements</tspan><tspan x="840" dy="14">directly</tspan>
+    </text></g>
+  <!-- step 4 lane1 AI deterministic -->
+  <g><rect x="960" y="185" width="160" height="60" rx="5" fill="#FFFFFF" stroke="#2F5D7C" stroke-width="1.5"></rect>
+    <text x="1040" y="203" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="#1C2026">
+      <tspan x="1040" dy="0">Edit propagates</tspan><tspan x="1040" dy="14">impact flags</tspan><tspan x="1040" dy="13" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="#244B64">&mdash; no model call</tspan>
+    </text></g>
+  <!-- step 5 lane2 BA sign-off -->
+  <g><rect x="1160" y="295" width="160" height="60" rx="5" fill="#E9F0EB" stroke="#386E51" stroke-width="1.5"></rect>
+    <text x="1240" y="317" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="#1C2026">
+      <tspan x="1240" dy="0">Sign-off</tspan><tspan x="1240" dy="14">&mdash; quality gate</tspan><tspan x="1240" dy="14">(named human)</tspan>
+    </text></g>
+  <!-- step 6 lane3 backlog -->
+  <g><rect x="1360" y="405" width="160" height="60" rx="5" fill="#FFFFFF" stroke="#D3CFC5"></rect>
+    <text x="1440" y="427" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="#1C2026">
+      <tspan x="1440" dy="0">Approved stories</tspan><tspan x="1440" dy="14">enter backlog &mdash;</tspan><tspan x="1440" dy="14">sprint starts same day</tspan>
+    </text></g>
+
+  <!-- arrows -->
+  <path d="M320,105 C345,105 345,215 360,215" fill="none" stroke="#565D6B" stroke-width="1.5" marker-end="url(#arrow2)"></path>
+  <path d="M520,215 C545,215 545,325 560,325" fill="none" stroke="#565D6B" stroke-width="1.5" marker-end="url(#arrow2)"></path>
+  <path d="M720,325 L760,325" fill="none" stroke="#565D6B" stroke-width="1.5" marker-end="url(#arrow2)"></path>
+  <path d="M920,325 C945,325 945,215 960,215" fill="none" stroke="#565D6B" stroke-width="1.5" marker-end="url(#arrow2)"></path>
+  <path d="M1120,215 C1145,215 1145,325 1160,325" fill="none" stroke="#565D6B" stroke-width="1.5" marker-end="url(#arrow2)"></path>
+  <path d="M1320,325 C1345,325 1345,435 1360,435" fill="none" stroke="#386E51" stroke-width="2.5" marker-end="url(#arrowGate)"></path>
+  <text x="1345" y="385" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="#386E51">SAFEGUARD GATE</text>
+  <text x="1345" y="397" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" fill="#386E51">nothing crosses without sign-off</text>
+</svg>
+  </div>
+  <div class="legend">
+    <span><i style="background:#FFFFFF;border:1.5px solid #2F5D7C"></i>AI / automation step</span>
+    <span><i style="background:#FFFFFF;border:1.5px solid #A2551F"></i>Human checkpoint</span>
+    <span><i style="background:#E9F0EB;border:1.5px solid #386E51"></i>Sign-off gate</span>
+  </div>
+
+  <p class="close">
+    Every AI-lane step in the TO-BE map corresponds to a numbered mechanism in the
+    Human-in-the-Loop Safeguard Protocol. The gate before Dev/Backlog is not decorative &mdash;
+    the prototype has no publish action; a human must copy or download the reviewed draft for it
+    to leave the tool at all.
+  </p>
+
+  <footer>AmadursInsight &middot; AS-IS vs TO-BE Workflow &middot; prepared for hackathon submission</footer>
+</main>
